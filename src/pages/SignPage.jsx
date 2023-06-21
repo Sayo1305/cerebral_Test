@@ -251,11 +251,11 @@ const SignPage = () => {
             )}
           </div>
 
-          <div className="md:w-2/3 w-full text-sm flex justify-end">
+          {/* <div className="md:w-2/3 w-full text-sm flex justify-end">
             <div className="text-blue-800 underline cursor-pointer">
               forget your password?
             </div>
-          </div>
+          </div> */}
           <div
             onClick={() => {
               handle_click();
