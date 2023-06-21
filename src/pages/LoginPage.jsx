@@ -2,7 +2,18 @@ import React, { useEffect, useState } from "react";
 import LOGO from "../assets/icon.svg";
 import BG from "../assets/BGLOG.png";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "../firebase";
+import { equalTo, get, orderByChild, query, ref } from "firebase/database";
 const LoginPage = () => {
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+  });
       const navigate = useNavigate();
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
@@ -15,11 +26,49 @@ const LoginPage = () => {
       setdisabledbutton(false);
     }
   }, [password]);
+  const WritetoBrowser = (email) => {
+    const data = query(ref(db, "Users"), orderByChild("email"), equalTo(email));
+    get(data).then((snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        Toast.fire({
+          title: "SignIn sucessfully (redirecting to home page)",
+          icon: "success",
+        });
+        const keys = Object.keys(data);
+        localStorage.setItem("CerebralId", data[keys[0]]?.id);
+        setTimeout(() => {
+          navigate("/");
+        }, [3000]);
+      } else {
+        Toast.fire({
+          title: "Try again, Something is went wrong",
+          icon: "warning",
+        });
+      }
+    });
+  };
+  const handle_click = ()=>{
+    console.log("handle_click")
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in
+      const user = userCredential.user;
+      // console.log(user.email);
+      WritetoBrowser(user.email);
+    })
+    .catch((error) => {
+      Toast.fire({
+        title: "Wrong password / Email",
+        icon: "error",
+      });
+    });
+  }
   return (
     <div className="w-full md:p-10 p-5 min-h-screen flex lg:flex-row flex-col lg:justify-center items-center">
       <div className="lg:w-1/2 w-full flex flex-col gap-5">
         <div className="lg:h-[50px] w-[100px]">
-          <img className="w-full h-full" src={LOGO} alt="logo" />
+          <img onClick={()=>{navigate('/')}} className="w-full h-full" src={LOGO} alt="logo" />
         </div>
         <div className="lg:h-[80vh] relative h-[40vw] lg:w-5/6 w-full bg-cover">
           <img className="w-full rounded-3xl h-full" src={BG} alt="" />
@@ -45,7 +94,6 @@ const LoginPage = () => {
             className="md:w-2/3 w-full rounded-2xl outline-none border border-blue-200 shadow-sm p-5"
             type="email"
             placeholder="Email"
-            id=""
           />
           {password && password.length !== 0 && (
             <div className="md:w-2/3 w-full flex justify-start">password</div>
@@ -59,7 +107,6 @@ const LoginPage = () => {
               className="w-full rounded-2xl outline-none border border-blue-200 shadow-sm p-5"
               type={showpassword ? 'text' : 'password'}
               placeholder="Password"
-              id=""
             />
             <div
               className="absolute right-[5px] top-1/3"
@@ -101,6 +148,7 @@ const LoginPage = () => {
             </div>
           </div>
           <div
+          onClick={()=>{ if(disabledbutton === false){handle_click()}}}
             className={`${
               disabledbutton === true ? "bg-[#D1D3D7]" : "bg-[#51459E]"
             } py-5 px-10 rounded-3xl cursor-pointer text-white`}

@@ -6,6 +6,17 @@ const Navbar = () => {
   const [OpenNavbar, setOpenNavbar] = useState(false);
   const location = useLocation();
   const [pathname, setPathname] = useState(location.pathname);
+  const [islogin , setislogin] = useState(false);
+  const userId = localStorage.getItem('CerebralId');
+  useEffect(()=>{
+    if(userId){
+      setislogin(true);
+    }
+  },[userId]);
+  const logout = ()=>{
+    localStorage.removeItem('CerebralId');
+    window.location.reload();
+  }
   useEffect(() => {
       setPathname(location.pathname);
   }, [location]);
@@ -23,12 +34,18 @@ const Navbar = () => {
         <div className="cursor-pointer hover:text-[#90A6FF]" onClick={()=>{navigate('/About')}}>About</div>
       </div>
       <div className="flex justify-center gap-5 items-center">
-        <div className="lg:block hidden cursor-pointer">Login</div>
+        {
+          islogin === false && <>
+                  <div  onClick={()=>{navigate('/app/Login')}} className="lg:block hidden cursor-pointer">Login</div>
         {OpenNavbar === false && (
-          <div onClick={()=>{navigate('/app/Login')}} className="py-3 px-8 cursor-pointer shadow-md font-bold bg-[#51459E] text-white rounded-3xl">
+          <div onClick={()=>{navigate('/app/SignUp')}} className="py-3 px-8 cursor-pointer shadow-md font-bold bg-[#51459E] text-white rounded-3xl">
             Get Started
           </div>
-        )}
+        )}</>
+        }
+        {
+          islogin === true && <div onClick={()=>{logout()}} className="bg-red-400 py-3 px-8 text-white cursor-pointer rounded-3xl">Logout</div>
+        }
         {OpenNavbar === true ? (
           <div
             className="lg:hidden block cursor-pointer"
@@ -72,18 +89,23 @@ const Navbar = () => {
       </div>
     </div>
     {
-      OpenNavbar === true && <div className="w-full fixed py-16 p-5 gap-2 h-screen bg-white flex flex-col">
+      OpenNavbar === true && <div className="w-full fixed py-24 p-5 gap-2 h-screen bg-white flex flex-col">
             <div className="p-5 font-semibold border-b-[1px] border-slate-200" onClick={()=>{navigate('/Plans'); setOpenNavbar(false)}}>Explore Plans</div>
             <div className="p-5 font-semibold border-b-[1px] border-slate-200" onClick={()=>{navigate('/therapy'); setOpenNavbar(false)}}>Therapy</div>
             <div className="p-5 font-semibold border-b-[1px] border-slate-200" onClick={()=>{navigate('/Medication'); setOpenNavbar(false)}}>Medication</div>
             <div className="p-5 font-semibold border-b-[1px] border-slate-200" onClick={()=>{navigate('/Insurance'); setOpenNavbar(false)}}>Insurance</div>
             <div className="p-5 font-semibold border-b-[1px] border-slate-200"onClick={()=>{navigate('/About'); setOpenNavbar(false)}}>About</div>
             <div className="w-full flex justify-center">
-            <div onClick={()=>{navigate('/app/Login'); OpenNavbar(false)}} className="py-3 px-8 cursor-pointer shadow-md font-bold bg-[#51459E] text-white rounded-3xl">
+              {
+                islogin === false && <>
+                         <div onClick={()=>{navigate('/app/SignUp'); setOpenNavbar(false)}} className="py-3 px-8 cursor-pointer shadow-md font-bold bg-[#51459E] text-white rounded-3xl">
             Get Started
-          </div>
+          </div></>
+              }
             </div>
-            <div className="w-full text-center font-semibold">Login</div>
+            {
+              islogin === false &&  <div  onClick={()=>{navigate('/app/Login'); setOpenNavbar(false)}} className="w-full text-center font-semibold">Login</div>
+            }
       </div>
     }
     </>
