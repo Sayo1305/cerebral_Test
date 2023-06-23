@@ -207,7 +207,7 @@ const SignPage = () => {
                       password.length <= 8 ? "text-red-800" : "text-green-800"
                     }`}
                   >
-                    {password.length <= 8 ? "X" : "🗸"}
+                    {password.length <= 8 ? "X" : `✓`}
                   </div>
                   <div> be at least 8 characters long</div>
                 </div>
@@ -219,7 +219,7 @@ const SignPage = () => {
                         : "text-green-800"
                     }`}
                   >
-                    {hasUpperAndLower(password) === false ? "X" : "🗸"}
+                    {hasUpperAndLower(password) === false ? "X" : `✓`}
                   </div>
                   <div> include both upper and lower case letters</div>
                 </div>
@@ -231,7 +231,7 @@ const SignPage = () => {
                         : "text-green-800"
                     }`}
                   >
-                    {hasDigit(password) === false ? "X" : "🗸"}
+                    {hasDigit(password) === false ? "X" : `✓`}
                   </div>
                   <div> include at least 1 number</div>
                 </div>
@@ -243,7 +243,7 @@ const SignPage = () => {
                         : "text-green-800"
                     }`}
                   >
-                    {hasSpecialCharacter(password) === false ? "X" : "🗸"}
+                    {hasSpecialCharacter(password) === false ? "X" : `✓`}
                   </div>
                   <div> include at least 1 special symbol like ! $ @ + %</div>
                 </div>
